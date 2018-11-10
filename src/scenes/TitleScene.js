@@ -5,27 +5,16 @@ class TitleScene extends Phaser.Scene {
         });
     }
     preload() {
-        this.load.atlas('mario-sprites', 'assets/mario-sprites.png', 'assets/mario-sprites.json');
+        // this.load.atlas('mario-sprites', 'assets/mario-sprites.png', 'assets/mario-sprites.json');
     }
     create() {
-        let config = {
-            key: 'title',
-            frames: [{
-                frame: 'title',
-                key: 'mario-sprites'
-            }]
-        };
-        this.anims.create(config);
-
-        this.title = this.add.sprite(this.sys.game.config.width / 2, 16 * 5);
-        this.title.play('title');
-        this.attractMode = this.scene.launch('GameScene');
-        console.log(this.attractMode.stop);
+        // this.attractMode = this.scene.launch('GameScene');
+        // console.log(this.attractMode.stop);
 
         this.scene.bringToTop();
 
-        this.registry.set('restartScene', false);
-        this.registry.set('attractMode', true);
+        // this.registry.set('restartScene', false);
+        // this.registry.set('attractMode', true);
 
         let sh = window.screen.availHeight;
         let sw = window.screen.availWidth;
@@ -72,12 +61,11 @@ class TitleScene extends Phaser.Scene {
 
     startGame() {
         this.scene.stop('GameScene');
-        this.registry.set('attractMode', false);
+
         this.scene.start('GameScene');
     }
 
     restartScene() {
-        //        this.attractMode.stop();
         this.scene.stop('GameScene');
         this.scene.launch('GameScene');
         this.scene.bringToTop();
