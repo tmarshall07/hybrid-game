@@ -1,10 +1,7 @@
 // import Mario from '../sprites/Mario';
 // import Goomba from '../sprites/Goomba';
 // import Turtle from '../sprites/Turtle';
-// import PowerUp from '../sprites/PowerUp';
-// import SMBTileSprite from '../sprites/SMBTileSprite';
-// import AnimatedTiles from 'phaser-animated-tiles/dist/AnimatedTiles.min.js';
-// import Fire from '../sprites/Fire';
+
 import Player from '../sprites/Player';
 class GameScene extends Phaser.Scene {
     constructor(test) {
