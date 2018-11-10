@@ -30,14 +30,14 @@ class BootScene extends Phaser.Scene {
         this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
 
         // Tilemap with a lot of objects and tile-properties tricks
-        // this.load.tilemapTiledJSON('map', 'assets/tilemaps/super-mario.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/jungle/jungle.json');
 
         // Load spritesheets
-        // this.load.spritesheet('tiles', 'assets/images/super-mario.png', {
-        //     frameWidth: 16,
-        //     frameHeight: 16,
-        //     spacing: 2
-        // });
+        this.load.spritesheet('tiles', 'assets/images/jungle-tileset.png', {
+            frameWidth: 16,
+            frameHeight: 16,
+            spacing: 2
+        });
 
         this.load.image('player', 'assets/images/adventurer/adventurer-idle-00.png');
 

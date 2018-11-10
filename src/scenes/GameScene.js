@@ -16,6 +16,20 @@ class GameScene extends Phaser.Scene {
 
     create() {
 
+        // Add the map and bind the tileset
+        this.map = this.make.tilemap({
+            key: 'map'
+        });
+        this.tileset = this.map.addTilesetImage('jungle-tileset', 'tiles');
+
+        // Dynamic layer because we want breakable and animated tiles
+        this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
+
+        // Set collision by property
+        this.groundLayer.setCollisionByProperty({
+            collide: true
+        });
+
         // Create player
         this.player = new Player({
             scene: this,
