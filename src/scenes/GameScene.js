@@ -26,9 +26,15 @@ class GameScene extends Phaser.Scene {
         this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
 
         // Set collision by property
-        this.groundLayer.setCollisionByProperty({
-            collide: true
-        });
+        // this.groundLayer.setCollisionByProperty({
+        //     collidable: true,
+        // });
+
+        // FIGURE OUT WHY THE ABOVE DOESN'T WORK 
+        this.groundLayer.setCollisionByExclusion([-1]);
+        
+        // Add background
+        this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
 
         // Create player
         this.player = new Player({
@@ -37,10 +43,20 @@ class GameScene extends Phaser.Scene {
             x: 16 * 6,
             y: this.sys.game.config.height - 48 - 48
         });
+
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        this.groundLayer.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+        this.physics.add.collider(this.player, this.groundLayer);
     }
 
     update(time, delta) {
-
+        // Run player update method
+        this.player.update(this.keys, time, delta);
     }
     
     record(delta) {

@@ -8,9 +8,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     config.scene.physics.world.enable(this);
     config.scene.add.existing(this);
+
   }
 
   update () {
 
+  }
+
+  test () {
+    console.log('colliding');
   }
 }
