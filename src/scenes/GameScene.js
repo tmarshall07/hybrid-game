@@ -52,6 +52,13 @@ class GameScene extends Phaser.Scene {
         });
 
         this.physics.add.collider(this.player, this.groundLayer);
+
+        this.keys = {
+            jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+        };
     }
 
     update(time, delta) {
