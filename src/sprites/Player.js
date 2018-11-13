@@ -16,6 +16,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
     this.body.maxVelocity.x = 200;
     this.body.maxVelocity.y = 500;
 
+    // this.body.width = 16;
+    // this.body.height = 16;
+
     this.jumping = false;
     this.jumpTimer = 0;
 
@@ -75,6 +78,11 @@ export default class Player extends Phaser.GameObjects.Sprite {
             this.jumping = false;
         }
     }
+
+    if (this.y > 800) {
+      // Die if you fall off map
+      this.die();
+    }
   }
 
   // Set as running, use acceleration with maxVelocity to
@@ -98,7 +106,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
       this.jumpTimer = 50;
     }
     this.jumping = true;
+  }
 
-}
+  die() {
+    this.scene.scene.start('TitleScene');
+  }
 
 }
