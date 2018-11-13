@@ -26,9 +26,9 @@ class GameScene extends Phaser.Scene {
         this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
 
         // Set collision by property
-        // this.groundLayer.setCollisionByProperty({
-        //     collidable: true,
-        // });
+        this.groundLayer.setCollisionByProperty({
+            collidable: true,
+        });
 
         // FIGURE OUT WHY THE ABOVE DOESN'T WORK 
         this.groundLayer.setCollisionByExclusion([-1]);
@@ -41,14 +41,7 @@ class GameScene extends Phaser.Scene {
             scene: this,
             key: 'player',
             x: 16 * 6,
-            y: this.sys.game.config.height - 48 - 48
-        });
-
-        const debugGraphics = this.add.graphics().setAlpha(0.75);
-        this.groundLayer.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+            y: this.sys.game.config.height - 48 - 48,
         });
 
         this.physics.add.collider(this.player, this.groundLayer);
@@ -59,6 +52,20 @@ class GameScene extends Phaser.Scene {
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
         };
+
+        // The camera should follow Mario
+        this.cameras.main.startFollow(this.player);
+        this.cameras.main.roundPixels = true;
+
+        // Add debugging graphics
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        this.groundLayer.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+        // Turn on all physics debugging
+        this.physics.world.createDebugGraphic();
     }
 
     update(time, delta) {

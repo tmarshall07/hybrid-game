@@ -12,7 +12,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
     config.scene.physics.world.enable(this);
     config.scene.add.existing(this);
 
-    this.acceleration = 600;
+    this.acceleration = 800;
+    this.body.maxVelocity.x = 200;
+    this.body.maxVelocity.y = 500;
 
     this.jumping = false;
     this.jumpTimer = 0;
@@ -31,34 +33,59 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     if (input.left) {
       if (this.body.velocity.y === 0) {
-        this.run(-100);
+        this.run(-this.acceleration);
+      } else {
+        // If in the air, "bend" in direction of input
+        this.run(-this.acceleration / 3);
       }
+      // Reverse animation
       this.flipX = true;
     } else if (input.right) {
       if (this.body.velocity.y === 0) {
-        this.run(100);
+        this.run(this.acceleration);
+      } else {
+        // If in the air, "bend" in direction of input
+        this.run(this.acceleration / 3);
       }
       this.flipX = false;
-    } else {
-      this.run(0);
-    }
+      
+      // Else if no inputs found
+    } else if (this.body.blocked.down) {
 
+      // Stop if less than 10
+      if (Math.abs(this.body.velocity.x) < 10) {
+        this.body.setVelocityX(0);
+        this.run(0);
+      } else {
+        // Otherwise decelerate
+        this.run(((this.body.velocity.x > 0) ? -1 : 1) * this.acceleration);
+      }
+    } else if (!this.body.blocked.down) {
+      this.run(0);
+    } 
+
+    // Jump inputs
     if (input.jump && (!this.jumping || this.jumpTimer > 0)) {
       this.jump();
     } else if (!input.jump) {
         this.jumpTimer = -1; // Don't resume jump if button is released, prevents mini double-jumps
+        
+        // Not jumping if on the ground
         if (this.body.blocked.down) {
             this.jumping = false;
         }
     }
   }
 
-  run(vel) {
-    this.body.setVelocityX(vel);
+  // Set as running, use acceleration with maxVelocity to
+  // include a little slippage
+  run(acceleration) {
+    this.body.setAccelerationX(acceleration);
   }
 
+  // Control jump behavior  
   jump() {
-
+    // If not blocked our jumping
     if (!this.body.blocked.down && !this.jumping) {
         return;
     }
@@ -67,7 +94,8 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.body.setVelocityY(-200);
     }
     if (!this.jumping) {
-        this.jumpTimer = 300;
+      // Jump timer is how long to apply the vertical velocity (i.e. without acceleration of gravity having an effect)
+      this.jumpTimer = 50;
     }
     this.jumping = true;
 
