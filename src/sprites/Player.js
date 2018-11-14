@@ -1,3 +1,5 @@
+import Rope from '../sprites/Rope';
+
 /**
  *
  *
@@ -21,7 +23,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     this.jumping = false;
     this.jumpTimer = 0;
+    console.log(this);
 
+    this.rope = new Rope({
+      scene: this.scene,
+      x: this.x,
+      y: this.y,
+      key: 'rope',
+    });
   }
 
   update (keys, time, delta) {
@@ -30,6 +39,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
       right: keys.right.isDown,
       down: keys.down.isDown,
       jump: keys.jump.isDown,
+      rope: keys.rope.isDown,
     }
 
     this.jumpTimer -= delta;
@@ -79,6 +89,10 @@ export default class Player extends Phaser.GameObjects.Sprite {
         }
     }
 
+    if (input.rope) {
+      this.fireRope();
+    }
+
     if (this.y > 800) {
       // Die if you fall off map
       this.die();
@@ -110,6 +124,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
   die() {
     this.scene.scene.start('TitleScene');
+  }
+
+  fireRope() {
+    console.log(this);
+
+    this.rope.fire(this.body.x, this.body.y, this.flipX);
+    
+    console.log(this.rope)
   }
 
 }

@@ -51,6 +51,7 @@ class GameScene extends Phaser.Scene {
             left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
             down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+            rope: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
         };
 
         // The camera should follow Mario
