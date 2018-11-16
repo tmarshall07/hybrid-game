@@ -1,12 +1,15 @@
 export default class Rope extends Phaser.GameObjects.Sprite {
   constructor (config) {
     super(config.scene, config.x, config.y, config.key);
+
     config.scene.physics.world.enable(this);
     config.scene.add.existing(this);
 
     this.body.setSize(20, 20);
-    
-    // this.body.offset.set(12, 12);
+
+    console.log(this);
+
+    this.createRope();
   }
 
   fire(x, y, left) {
@@ -18,6 +21,10 @@ export default class Rope extends Phaser.GameObjects.Sprite {
     this.setPosition(x,y);
     this.body.velocity.y = -400;
     this.body.velocity.x = 400 * (left ? -1 : 1);
+  }
+  
+  createRope() {
+    this.scene.add.sprite(100, 100, 'chain');
   }
 
   update (time, delta) {
@@ -34,10 +41,5 @@ export default class Rope extends Phaser.GameObjects.Sprite {
     if(this.body.velocity.x === 0){
       this.explode();
     }
-  }
-
-  explode(){
-    this.body.allowGravity = false;
-    this.body.velocity.y = 0;
   }
 }

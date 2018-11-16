@@ -15,7 +15,7 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-
+    
         // Add the map and bind the tileset
         this.map = this.make.tilemap({
             key: 'map'
@@ -67,6 +67,8 @@ class GameScene extends Phaser.Scene {
         });
         // Turn on all physics debugging
         this.physics.world.createDebugGraphic();
+
+        console.debug(this);
     }
 
     update(time, delta) {
@@ -100,7 +102,7 @@ class GameScene extends Phaser.Scene {
                     update = true;
                 }
             });
-        }
+        }  
         if (update) {
             recording.push({
                 time,

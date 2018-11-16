@@ -29,6 +29,7 @@ class BootScene extends Phaser.Scene {
 
         this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
         this.load.image('rope', 'assets/images/items/glove.png');
+        this.load.image('chain', 'assets/images/items/chain.png');
 
         // Tilemap with a lot of objects and tile-properties tricks
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/jungle/jungle.json');
