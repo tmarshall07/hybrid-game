@@ -44,7 +44,7 @@ class GameScene extends Phaser.Scene {
             y: this.sys.game.config.height - 48 - 48,
         });
 
-        this.physics.add.collider(this.player, this.groundLayer);
+        // this.physics.add.collider(this.player, this.groundLayer);
 
         this.keys = {
             jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
@@ -55,7 +55,7 @@ class GameScene extends Phaser.Scene {
         };
 
         // The camera should follow Mario
-        this.cameras.main.startFollow(this.player);
+        // this.cameras.main.startFollow(this.player);
         this.cameras.main.roundPixels = true;
 
         // Add debugging graphics
@@ -66,9 +66,8 @@ class GameScene extends Phaser.Scene {
             faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
         });
         // Turn on all physics debugging
-        this.physics.world.createDebugGraphic();
+        this.matter.world.createDebugGraphic();
 
-        console.debug(this);
     }
 
     update(time, delta) {

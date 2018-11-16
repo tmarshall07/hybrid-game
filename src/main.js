@@ -11,8 +11,19 @@ const config = {
     parent: 'content',
     width: 400,
     height: 240,
+    // physics: {
+    //     default: 'arcade',
+    //     arcade: {
+    //         gravity: { y: 500 },
+    //         debug: false
+    //     }
+    // },
     physics: {
-        default: 'arcade',
+        default: 'matter',
+        matter: {
+            gravity: { y: 500 },
+            debug: true,
+        },
         arcade: {
             gravity: { y: 500 },
             debug: false
