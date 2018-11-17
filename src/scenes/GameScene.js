@@ -23,16 +23,17 @@ class GameScene extends Phaser.Scene {
         this.tileset = this.map.addTilesetImage('industrial', 'tiles');
         console.log(this.tileset);
 
+        this.backgroundLayer = this.map.createStaticLayer('background', this.tileset, 0, 0);
+        this.behindLayer = this.map.createStaticLayer('behind', this.tileset, 0, 0);
         // Dynamic layer because we want breakable and animated tiles
         this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
 
         // Set collision by property
+        // TILED 1.2.1 DOES NOT EXPORT PROPERTIES CORRECTLY
+        // WAITING FOR NEXT PHASER UPDATE
         this.groundLayer.setCollisionByProperty({
             collides: true,
         });
-
-        // FIGURE OUT WHY THE ABOVE DOESN'T WORK 
-        // this.groundLayer.setCollisionByExclusion([-1]);
 
         // Get the layers registered with Matter. Any colliding tiles will be given a Matter body. We
         // haven't mapped our collision shapes in Tiled so each colliding tile will get a default
@@ -44,6 +45,11 @@ class GameScene extends Phaser.Scene {
 
         // The spawn point is set using a point object inside of Tiled (within the "Spawn" object layer)
         const { x, y } = this.map.findObject("Objects", obj => obj.name === "Spawn Point");
+        if (!x || !y) {
+            x = 10;
+            y = 10;
+            console.log('No spawn point found');
+        }
         // Create player
         this.player = new Player({
             scene: this,
@@ -78,61 +84,13 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player.sprite, false, 0.5, 0.5);
         this.cameras.main.roundPixels = true;
 
-        // Add debugging graphics
-        const debugGraphics = this.add.graphics().setAlpha(0.75);
-        this.groundLayer.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
         // Turn on all physics debugging
         this.matter.world.createDebugGraphic();
 
     }
 
     update(time, delta) {
-        // Run player update method
-        // this.player.update(this.keys, time, delta);
-    }
-    
-    record(delta) {
-        let update = false;
-        let keys = {
-            jump: this.keys.jump.isDown || this.keys.jump2.isDown,
-            left: this.keys.left.isDown,
-            right: this.keys.right.isDown,
-            down: this.keys.down.isDown,
-            fire: this.keys.fire.isDown,
-        }
-        if (typeof (recording) === 'undefined') {
-            console.log('DEFINE')
-            window.recording = [];
-            window.time = 0;
-            this.recordedKeys = {};
-            update = true;
-        }  else {
-            update = (time - recording[recording.length - 1].time) > 200; // update at least 5 times per second
-        }
-        time += delta;
-        if (!update) {
-            // update if keys changed
-            ['jump', 'left', 'right', 'down', 'fire'].forEach((dir) => {
-                if (keys[dir] != this.recordedKeys[dir]) {
-                    update = true;
-                }
-            });
-        }  
-        if (update) {
-            recording.push({
-                time,
-                keys,
-                x: this.mario.x,
-                y: this.mario.y,
-                vx: this.mario.body.velocity.x,
-                vy: this.mario.body.velocity.y
-            });
-        }
-        this.recordedKeys = keys;
+        
     }
 }
 
