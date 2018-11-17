@@ -29,7 +29,8 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "phaser": "3.12.0",
-    "phaser-animated-tiles": "^2.0.2"
+    "phaser": "3.13.0",
+    "phaser-animated-tiles": "^2.0.2",
+    "phaser-matter-collision-plugin": "^0.10.1"
   }
 }
