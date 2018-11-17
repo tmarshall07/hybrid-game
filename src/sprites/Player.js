@@ -71,13 +71,20 @@ export default class Player {
       context: this
     });
 
-    // Add update loop call
-    scene.events.on("update", this.update, this);
+    // Destroy player on scene events
+    this.scene.events.on("update", this.update, this);
+    
+    // Destroy player on shutdown or destroy
+    this.destroyed = false;
+    this.scene.events.once("shutdown", this.destroy, this);
+    this.scene.events.once("destroy", this.destroy, this);
 
     console.log(this);
   }
 
   update () {
+    if (this.destroyed) return;
+
     const sprite = this.sprite;
     const velocity = this.sprite.body.velocity;
     const rightKeyDown = this.rightInput.isDown();
@@ -146,6 +153,28 @@ export default class Player {
 
   die() {
     this.scene.scene.start('TitleScene');
+  }
+
+  destroy() {
+    this.destroyed = true;
+
+    // Event listeners
+    this.scene.events.off("update", this.update, this);
+    this.scene.events.off("shutdown", this.destroy, this);
+    this.scene.events.off("destroy", this.destroy, this);
+    if (this.scene.matter.world) {
+      this.scene.matter.world.off("beforeupdate", this.resetTouching, this);
+    }
+
+    // Matter collision plugin
+    const sensors = [this.sensors.bottom, this.sensors.left, this.sensors.right];
+    this.scene.matterCollision.removeOnCollideStart({ objectA: sensors });
+    this.scene.matterCollision.removeOnCollideActive({ objectA: sensors });
+
+    // Don't want any timers triggering post-mortem
+    if (this.jumpCooldownTimer) this.jumpCooldownTimer.destroy();
+
+    this.sprite.destroy();
   }
 
 }

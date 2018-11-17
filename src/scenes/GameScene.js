@@ -20,18 +20,19 @@ class GameScene extends Phaser.Scene {
         this.map = this.make.tilemap({
             key: 'map'
         });
-        this.tileset = this.map.addTilesetImage('jungle-tileset', 'tiles');
+        this.tileset = this.map.addTilesetImage('industrial', 'tiles');
+        console.log(this.tileset);
 
         // Dynamic layer because we want breakable and animated tiles
         this.groundLayer = this.map.createDynamicLayer('world', this.tileset, 0, 0);
 
         // Set collision by property
         this.groundLayer.setCollisionByProperty({
-            collidable: true,
+            collides: true,
         });
 
         // FIGURE OUT WHY THE ABOVE DOESN'T WORK 
-        this.groundLayer.setCollisionByExclusion([-1]);
+        // this.groundLayer.setCollisionByExclusion([-1]);
 
         // Get the layers registered with Matter. Any colliding tiles will be given a Matter body. We
         // haven't mapped our collision shapes in Tiled so each colliding tile will get a default
@@ -40,17 +41,15 @@ class GameScene extends Phaser.Scene {
 
         // Set camera and matter bounds
         this.matter.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        
-        // Add background
-        this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
 
-        console.log(this);
+        // The spawn point is set using a point object inside of Tiled (within the "Spawn" object layer)
+        const { x, y } = this.map.findObject("Objects", obj => obj.name === "Spawn Point");
         // Create player
         this.player = new Player({
             scene: this,
             key: 'player',
-            x: 16 * 6,
-            y: 100,
+            x,
+            y,
         });
 
         console.log(this.player);
