@@ -27,7 +27,7 @@ class BootScene extends Phaser.Scene {
             this.scene.start('TitleScene');
         });
 
-        this.load.image('rope', 'assets/images/items/glove.png');
+        this.load.image('glove', 'assets/images/items/glove.png');
         this.load.image('chain', 'assets/images/items/chain.png');
 
         // Tilemap with a lot of objects and tile-properties tricks
