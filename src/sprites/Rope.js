@@ -1,45 +1,38 @@
-export default class Rope extends Phaser.GameObjects.Sprite {
+export default class Rope {
   constructor (config) {
-    super(config.scene, config.x, config.y, config.key);
+    const { x, y, key, scene } = config;
+    
+    this.scene = scene;
 
-    config.scene.physics.world.enable(this);
-    config.scene.add.existing(this);
+    this.block = scene.matter.add.image(x, y, key, null, {
+      ignoreGravity: true,
+    })
+    .setFixedRotation()
+    .setMass(5);
+  
+    let previousLink = this.block;
+    y += 5;
 
-    this.body.setSize(20, 20);
+    for (let i = 0; i < 12; i += 1) {
+      const link = scene.matter.add.image(x, y, 'chain', null, {
+        shape: 'circle',
+        mass: 0.1,
+      });
 
-    console.log(this);
+      scene.matter.add.joint(prev, previousLink, 5, 0.4);
 
-    this.createRope();
+      previousLink = link;
+      
+      y += 4;
+    }
   }
 
   fire(x, y, left) {
-    this.setActive(true);
-    this.setVisible(true);
-
-    this.body.allowGravity = true;
-
-    this.setPosition(x,y);
-    this.body.velocity.y = -400;
-    this.body.velocity.x = 400 * (left ? -1 : 1);
-  }
-  
-  createRope() {
-    this.scene.add.sprite(100, 100, 'chain');
+    
   }
 
-  update (time, delta) {
-    if(!this.active){
-        return;
-    }
-    this.scene.physics.world.collide(this, this.scene.groundLayer, ()=> this.collided());   
+  update () {
+
   }
 
-  collided() {
-    if(this.body.velocity.y === 0){
-      this.body.velocity.y=-150;
-    }
-    if(this.body.velocity.x === 0){
-      this.explode();
-    }
-  }
 }

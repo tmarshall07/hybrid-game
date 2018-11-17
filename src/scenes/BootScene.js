@@ -27,18 +27,17 @@ class BootScene extends Phaser.Scene {
             this.scene.start('TitleScene');
         });
 
-        this.load.image('background-clouds', 'assets/images/clouds.png'); // 16-bit later
-        this.load.image('rope', 'assets/images/items/glove.png');
+        this.load.image('glove', 'assets/images/items/glove.png');
         this.load.image('chain', 'assets/images/items/chain.png');
 
         // Tilemap with a lot of objects and tile-properties tricks
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/jungle/jungle.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/level-1/level-1.json');
 
         // Load spritesheets
-        this.load.spritesheet('tiles', 'assets/images/jungle-tileset.png', {
+        this.load.spritesheet('tiles', 'assets/images/industrial.png', {
             frameWidth: 16,
             frameHeight: 16,
-            spacing: 2
+            spacing: 0,
         });
 
         this.load.image('player', 'assets/images/adventurer/adventurer-idle-00.png');
