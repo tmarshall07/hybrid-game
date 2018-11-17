@@ -32,19 +32,40 @@ class GameScene extends Phaser.Scene {
 
         // FIGURE OUT WHY THE ABOVE DOESN'T WORK 
         this.groundLayer.setCollisionByExclusion([-1]);
+
+        // Get the layers registered with Matter. Any colliding tiles will be given a Matter body. We
+        // haven't mapped our collision shapes in Tiled so each colliding tile will get a default
+        // rectangle body (similar to AP).
+        this.matter.world.convertTilemapLayer(this.groundLayer);
+
+        // Set camera and matter bounds
+        this.matter.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         
         // Add background
         this.add.tileSprite(0, 0, this.groundLayer.width, 500, 'background-clouds');
 
+        console.log(this);
         // Create player
         this.player = new Player({
             scene: this,
             key: 'player',
             x: 16 * 6,
-            y: this.sys.game.config.height - 48 - 48,
+            y: 100,
         });
 
-        // this.physics.add.collider(this.player, this.groundLayer);
+        console.log(this.player);
+
+        this.matter.world.on("collisionstart", event => {
+            event.pairs.forEach(pair => {
+            const { bodyA, bodyB } = pair;
+            });
+        });
+        
+        this.matter.world.on("collisionend", event => {
+            event.pairs.forEach(pair => {
+            const { bodyA, bodyB } = pair;
+            });
+        });
 
         this.keys = {
             jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
@@ -55,7 +76,7 @@ class GameScene extends Phaser.Scene {
         };
 
         // The camera should follow Mario
-        // this.cameras.main.startFollow(this.player);
+        this.cameras.main.startFollow(this.player.sprite, false, 0.5, 0.5);
         this.cameras.main.roundPixels = true;
 
         // Add debugging graphics
@@ -72,7 +93,7 @@ class GameScene extends Phaser.Scene {
 
     update(time, delta) {
         // Run player update method
-        this.player.update(this.keys, time, delta);
+        // this.player.update(this.keys, time, delta);
     }
     
     record(delta) {

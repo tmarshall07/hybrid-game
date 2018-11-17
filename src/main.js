@@ -11,23 +11,12 @@ const config = {
     parent: 'content',
     width: 400,
     height: 240,
-    // physics: {
-    //     default: 'arcade',
-    //     arcade: {
-    //         gravity: { y: 500 },
-    //         debug: false
-    //     }
-    // },
     physics: {
         default: 'matter',
         matter: {
-            gravity: { y: 500 },
+            gravity: { y: .5 },
             debug: true,
         },
-        arcade: {
-            gravity: { y: 500 },
-            debug: false
-        }
     },
     scene: [
         BootScene,
