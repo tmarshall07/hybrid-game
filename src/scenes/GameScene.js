@@ -58,8 +58,6 @@ class GameScene extends Phaser.Scene {
             y,
         });
 
-        console.log(this.player);
-
         this.matter.world.on("collisionstart", event => {
             event.pairs.forEach(pair => {
             const { bodyA, bodyB } = pair;
@@ -71,14 +69,6 @@ class GameScene extends Phaser.Scene {
             const { bodyA, bodyB } = pair;
             });
         });
-
-        this.keys = {
-            jump: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-            rope: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
-        };
 
         // The camera should follow Mario
         this.cameras.main.startFollow(this.player.sprite, false, 0.5, 0.5);

@@ -1,38 +1,43 @@
 export default class Rope {
   constructor (config) {
-    const { x, y, key, scene } = config;
+    const { player, key, scene } = config;
     
     this.scene = scene;
 
-    this.block = scene.matter.add.image(x, y, key, null, {
-      ignoreGravity: true,
-    })
-    .setFixedRotation()
-    .setMass(5);
+    // this.block = scene.matter.add.sprite(player.x, player.y, key, null, {
+    //   ignoreGravity: true,
+    // })
+    // .setFixedRotation()
+    // .setMass(5);
   
-    let previousLink = this.block;
-    y += 5;
+    let previousLink;
+    let x = player.x;
+    let y = player.y;
 
     for (let i = 0; i < 12; i += 1) {
-      const link = scene.matter.add.image(x, y, 'chain', null, {
+      const link = scene.matter.add.sprite(x, y, 'chain', null, {
         shape: 'circle',
         mass: 0.1,
       });
 
-      scene.matter.add.joint(prev, previousLink, 5, 0.4);
+      if (!previousLink) link.applyForce({ x: .01, y: -.01});
+      
+      if (previousLink) scene.matter.add.joint(previousLink, link, 5, 0.4);
 
       previousLink = link;
-      
-      y += 4;
     }
+
+    scene.matter.add.joint(previousLink, player);
+
+    console.log(this);
   }
 
-  fire(x, y, left) {
+  fire() {
     
   }
 
   update () {
-
+    
   }
 
 }

@@ -43,10 +43,11 @@ export default class Player {
       .setPosition(config.x, config.y);
 
     // Set keys
-    const { LEFT, RIGHT, UP, A, D, W } = Phaser.Input.Keyboard.KeyCodes;
+    const { LEFT, RIGHT, UP, A, D, W, X } = Phaser.Input.Keyboard.KeyCodes;
     this.leftInput = new MultiKey(scene, [LEFT, A]);
     this.rightInput = new MultiKey(scene, [RIGHT, D]);
     this.jumpInput = new MultiKey(scene, [UP, W]);
+    this.ropeInput = new MultiKey(scene, [X]);
 
     // Track sensors that are touching something
     this.isTouching = { left: false, right: false, ground: false };
@@ -54,6 +55,10 @@ export default class Player {
     // Jump cooldown
     this.canJump = true;
     this.jumpCooldownTimer = null;
+
+    // Rope cooldown
+    this.canFireRope = true;
+    this.ropeCooldown = null;
 
     // Before matter's update, reset our record of what surfaces the player is touching.
     scene.matter.world.on('beforeupdate', this.resetTouching, this);
@@ -78,8 +83,6 @@ export default class Player {
     this.destroyed = false;
     this.scene.events.once("shutdown", this.destroy, this);
     this.scene.events.once("destroy", this.destroy, this);
-
-    console.log(this);
   }
 
   update () {
@@ -90,6 +93,7 @@ export default class Player {
     const rightKeyDown = this.rightInput.isDown();
     const leftKeyDown = this.leftInput.isDown();
     const jumpKeyDown = this.jumpInput.isDown();
+    const ropeKeyDown = this.ropeInput.isDown();
 
     const isOnGround = this.isTouching.ground;
     const isInAir = !isOnGround;
@@ -126,9 +130,14 @@ export default class Player {
       });
     }
 
-    if (this.y > 800) {
-      // Die if you fall off map
-      this.die();
+    if (ropeKeyDown) {
+      if (this.canFireRope) {
+        this.fireRope();
+
+        this.canFireRope = false;
+      } else {
+        console.log(this.rope);
+      }
     }
   }
 
@@ -151,10 +160,6 @@ export default class Player {
     this.isTouching.ground = false;
   }
 
-  die() {
-    this.scene.scene.start('TitleScene');
-  }
-
   destroy() {
     this.destroyed = true;
 
@@ -175,6 +180,18 @@ export default class Player {
     if (this.jumpCooldownTimer) this.jumpCooldownTimer.destroy();
 
     this.sprite.destroy();
+  }
+
+  fireRope() {
+    this.rope = new Rope({
+      player: this.sprite,
+      key: 'glove',
+      scene: this.scene,
+    });
+
+    this.ropeCooldown
+
+    console.log(this.rope);
   }
 
 }
