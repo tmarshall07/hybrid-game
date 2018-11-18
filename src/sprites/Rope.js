@@ -10,7 +10,7 @@ export default class Rope {
     // Increment category so the rope gets assigned a new category number
     this.collisionCategory = this.scene.matter.world.nextCategory();
 
-    this.hook = scene.matter.add.sprite(x, y, 'glove', null, {
+    this.hook = scene.matter.add.sprite(x, y, 'chain', null, {
       shape: 'circle',
       mass: .1,
       ignoreGravity: false,
@@ -22,7 +22,7 @@ export default class Rope {
 
     let previousLink;
     const jointLength = 2;
-    const jointElasticity = .1;
+    const jointStiffness = .1;
     
     for (let i = 0; i < 5; i += 1) {
       const link = scene.matter.add.sprite(x, y, 'chain', null, {
@@ -37,12 +37,12 @@ export default class Rope {
 
       // If there's no previous link, attach first link to hook
       if (!previousLink) {
-        scene.matter.add.joint(this.hook, link, jointLength, jointElasticity);
+        scene.matter.add.constraint(this.hook, link, jointLength, jointStiffness);
       }
       
       // If there was a previous link, join this link with the previous
       if (previousLink) {
-        scene.matter.add.joint(previousLink, link, jointLength, jointElasticity);
+        scene.matter.add.constraint(previousLink, link, jointLength, jointStiffness);
       } 
 
       previousLink = link;
