@@ -40,7 +40,8 @@ class GameScene extends Phaser.Scene {
         // rectangle body (similar to AP).
         this.matter.world.convertTilemapLayer(this.groundLayer);
         
-        // Create ground category
+        // Set groundCollisionCategory (TODO: FIND A BETTER METHOD FOR GETTING THIS VALUE)
+        // Not sure how to find the collision category MatterTiles converted with convertTilemapLayer
         this.groundCollisionCategory = this.matter.world.localWorld.bodies[0].collisionFilter.category;
         
         // Set camera and matter bounds

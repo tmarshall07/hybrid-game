@@ -78,7 +78,7 @@ export default class Player {
       context: this
     });
 
-    // Destroy player on scene events
+    // Hook into Phaser update
     this.scene.events.on("update", this.update, this);
     
     // Destroy player on shutdown or destroy
