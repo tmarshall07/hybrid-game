@@ -39,7 +39,10 @@ class GameScene extends Phaser.Scene {
         // haven't mapped our collision shapes in Tiled so each colliding tile will get a default
         // rectangle body (similar to AP).
         this.matter.world.convertTilemapLayer(this.groundLayer);
-
+        
+        // Create ground category
+        this.groundCollisionCategory = this.matter.world.localWorld.bodies[0].collisionFilter.category;
+        
         // Set camera and matter bounds
         this.matter.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
 
@@ -77,6 +80,7 @@ class GameScene extends Phaser.Scene {
         // Turn on all physics debugging
         this.matter.world.createDebugGraphic();
 
+        console.log(this);
     }
 
     update(time, delta) {

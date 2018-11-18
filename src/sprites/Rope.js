@@ -3,26 +3,27 @@ export default class Rope {
     const { player, key, scene } = config;
     
     this.scene = scene;
-
-    // this.block = scene.matter.add.sprite(player.x, player.y, key, null, {
-    //   ignoreGravity: true,
-    // })
-    // .setFixedRotation()
-    // .setMass(5);
   
     let previousLink;
     let x = player.x;
     let y = player.y;
 
-    for (let i = 0; i < 12; i += 1) {
+    // Increment category
+    this.collisionCategory = this.scene.matter.world.nextCategory();
+    this.nextCat = this.scene.matter.world.nextCategory();
+
+    for (let i = 0; i < 10; i += 1) {
       const link = scene.matter.add.sprite(x, y, 'chain', null, {
         shape: 'circle',
-        mass: 0.1,
-      });
+        mass: 0,
+        ignoreGravity: true,
+      }).setCollisionCategory(this.collisionCategory).setCollidesWith(1);
 
-      if (!previousLink) link.applyForce({ x: .01, y: -.01});
+      if (!previousLink) link.applyForce({ x: .01, y: -.01 });
       
-      if (previousLink) scene.matter.add.joint(previousLink, link, 5, 0.4);
+      if (previousLink) {
+        this.joint = scene.matter.add.joint(previousLink, link, 20, 0.4);
+      } 
 
       previousLink = link;
     }

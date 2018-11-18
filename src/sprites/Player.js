@@ -14,6 +14,7 @@ export default class Player {
 
     // Create the sprite
     this.sprite = this.scene.matter.add.sprite(x, y, key, 0);
+    this.collisionCategory = this.scene.matter.world.nextCategory();
     
     // Add matter bodies, sensors, and sprite options
     const { Body, Bodies } = Phaser.Physics.Matter.Matter;
@@ -40,7 +41,8 @@ export default class Player {
     this.sprite
       .setExistingBody(compoundBody)
       .setFixedRotation()
-      .setPosition(config.x, config.y);
+      .setPosition(config.x, config.y)
+      .setCollisionCategory(this.collisionCategory);
 
     // Set keys
     const { LEFT, RIGHT, UP, A, D, W, X } = Phaser.Input.Keyboard.KeyCodes;
@@ -83,6 +85,8 @@ export default class Player {
     this.destroyed = false;
     this.scene.events.once("shutdown", this.destroy, this);
     this.scene.events.once("destroy", this.destroy, this);
+
+    console.log(this);
   }
 
   update () {
