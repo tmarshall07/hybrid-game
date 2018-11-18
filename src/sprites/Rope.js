@@ -21,8 +21,10 @@ export default class Rope {
     .setCollidesWith(scene.groundCollisionCategory);
 
     let previousLink;
+    const jointLength = 2;
+    const jointElasticity = .1;
     
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 5; i += 1) {
       const link = scene.matter.add.sprite(x, y, 'chain', null, {
         shape: 'circle',
         mass: 0,
@@ -35,12 +37,12 @@ export default class Rope {
 
       // If there's no previous link, attach first link to hook
       if (!previousLink) {
-        scene.matter.add.joint(this.hook, link, 20, 0.1);
+        scene.matter.add.joint(this.hook, link, jointLength, jointElasticity);
       }
       
       // If there was a previous link, join this link with the previous
       if (previousLink) {
-        scene.matter.add.joint(previousLink, link, 20, 0.4);
+        scene.matter.add.joint(previousLink, link, jointLength, jointElasticity);
       } 
 
       previousLink = link;
@@ -58,7 +60,6 @@ export default class Rope {
       context: this
     });
 
-    console.log(this);
     this.hooked = false;
     this.hookedPosition = {
       x: null,
@@ -75,6 +76,7 @@ export default class Rope {
 
   update () {
     if (this.hooked) {
+      // If we're hooked, hold hook in this position
       this.hook.x = this.hookedPosition.x;
       this.hook.y = this.hookedPosition.y;
     }
@@ -82,7 +84,13 @@ export default class Rope {
 
   onHookCollide() {
     this.hooked = true;
+    this.hookedPosition.x = this.hook.x;
+    this.hookedPosition.y = this.hook.y;
     console.log(this.hook);
+  }
+
+  reset() {
+
   }
 
 }
