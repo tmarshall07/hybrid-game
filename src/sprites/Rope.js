@@ -42,7 +42,7 @@ export default class Rope {
       
       // If there was a previous link, join this link with the previous
       if (previousLink) {
-        scene.matter.add.constraint(previousLink, link, jointLength, jointStiffness);
+        scene.matter.add.constraint(link, previousLink, jointLength, jointStiffness);
       } 
 
       previousLink = link;
