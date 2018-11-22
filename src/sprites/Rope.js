@@ -53,23 +53,28 @@ export default class Rope {
       // Make sure it only collides with the ground layer
       .setCollidesWith(this.scene.groundCollisionCategory);
 
+      let constraint;
+
       // If there's no previous link, attach first link to hook
       if (!previousLink) {
-        this.scene.matter.add.constraint(this.hook, link, jointLength, jointStiffness);
+        constraint = this.scene.matter.add.constraint(this.hook, link, jointLength, jointStiffness);
+      } else {
+        constraint = this.scene.matter.add.constraint(link, previousLink, jointLength, jointStiffness);
       }
-      
-      // If there was a previous link, join this link with the previous
-      if (previousLink) {
-        this.scene.matter.add.constraint(link, previousLink, jointLength, jointStiffness);
-      } 
 
-      this.links.push(link);
+      // Add label to know which constraint this is
+      constraint.label = "rope_constraint";
+
+      this.links.push({
+        link,
+        constraint,
+      });
 
       previousLink = link;
     }
 
     // Attach rope to player
-    this.scene.matter.add.joint(previousLink, this.player);
+    this.scene.matter.add.constraint(previousLink, this.player);
 
     // Set hooked state
     this.hooked = false;
@@ -81,13 +86,22 @@ export default class Rope {
     // Propel hook outward
     let hookDirection = this.player.flipX ? -1 : 1;
     this.hook.applyForce({ x: .0075 * hookDirection, y: -.0075 });
+
+    console.log(this.scene.matter.world);
   }
 
   release () {
     this.hooked = false;
     for (let i = 0; i < this.links.length; i += 1) {
-      // this.links[i].destroy();
+      this.links[i].link.destroy();
     }
+
+    const constraints = this.scene.matter.world.localWorld.constraints;
+    for (let i = 0; i < constraints.length; i += 1) {
+      if (constraints[i].label === 'rope_constraint') constraints.splice(i, 1);
+    }
+
+    console.log(this.scene.matter.world);
   }
 
   update () {
