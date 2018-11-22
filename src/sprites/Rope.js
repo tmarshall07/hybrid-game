@@ -3,29 +3,47 @@ export default class Rope {
     const { player, key, scene } = config;
     
     this.scene = scene;
+    this.player = player;
 
-    let x = player.x;
-    let y = player.y;
+    this.x = player.x;
+    this.y = player.y;
 
     // Increment category so the rope gets assigned a new category number
     this.collisionCategory = this.scene.matter.world.nextCategory();
 
-    this.hook = scene.matter.add.sprite(x, y, 'chain', null, {
+    // Create the hook that grabs on to things
+    this.hook = this.scene.matter.add.sprite(this.x, this.y, 'chain', null, {
       shape: 'circle',
       mass: .1,
       ignoreGravity: false,
-    })     
+    })
     // Set collision category for each element
     .setCollisionCategory(this.collisionCategory)
     // Make sure it only collides with the ground layer
-    .setCollidesWith(scene.groundCollisionCategory);
+    .setCollidesWith(this.scene.groundCollisionCategory);
+
+    // Add collider plugin listener
+    this.scene.matterCollision.addOnCollideStart({
+      objectA: this.hook,
+      callback: this.onHookCollide,
+      context: this
+    });
+
+    // Hook into Phaser update
+    this.scene.events.on("update", this.update, this);
+
+    console.log(this.player);
+  }
+
+  fire() {
+    this.links = [];
 
     let previousLink;
     const jointLength = 2;
     const jointStiffness = .1;
     
     for (let i = 0; i < 5; i += 1) {
-      const link = scene.matter.add.sprite(x, y, 'chain', null, {
+      const link = this.scene.matter.add.sprite(this.x, this.y, 'chain', null, {
         shape: 'circle',
         mass: 0,
         ignoreGravity: true,
@@ -33,45 +51,43 @@ export default class Rope {
       // Set collision category for each element
       .setCollisionCategory(this.collisionCategory)
       // Make sure it only collides with the ground layer
-      .setCollidesWith(scene.groundCollisionCategory);
+      .setCollidesWith(this.scene.groundCollisionCategory);
 
       // If there's no previous link, attach first link to hook
       if (!previousLink) {
-        scene.matter.add.constraint(this.hook, link, jointLength, jointStiffness);
+        this.scene.matter.add.constraint(this.hook, link, jointLength, jointStiffness);
       }
       
       // If there was a previous link, join this link with the previous
       if (previousLink) {
-        scene.matter.add.constraint(link, previousLink, jointLength, jointStiffness);
+        this.scene.matter.add.constraint(link, previousLink, jointLength, jointStiffness);
       } 
+
+      this.links.push(link);
 
       previousLink = link;
     }
 
     // Attach rope to player
-    scene.matter.add.joint(previousLink, player);
+    this.scene.matter.add.joint(previousLink, this.player);
 
-    // Propel hook outward
-    this.hook.applyForce({ x: .0075, y: -.0075 });
-
-    scene.matterCollision.addOnCollideStart({
-      objectA: this.hook,
-      callback: this.onHookCollide,
-      context: this
-    });
-
+    // Set hooked state
     this.hooked = false;
     this.hookedPosition = {
       x: null,
       y: null,
     }
 
-    // Hook into Phaser update
-    this.scene.events.on("update", this.update, this);
+    // Propel hook outward
+    let hookDirection = this.player.flipX ? -1 : 1;
+    this.hook.applyForce({ x: .0075 * hookDirection, y: -.0075 });
   }
 
-  fire() {
-    
+  release () {
+    this.hooked = false;
+    for (let i = 0; i < this.links.length; i += 1) {
+      // this.links[i].destroy();
+    }
   }
 
   update () {
@@ -83,14 +99,11 @@ export default class Rope {
   }
 
   onHookCollide() {
+    // Toggle hook state
     this.hooked = true;
+
+    // Add hooked position as this current position
     this.hookedPosition.x = this.hook.x;
     this.hookedPosition.y = this.hook.y;
-    console.log(this.hook);
   }
-
-  reset() {
-
-  }
-
 }

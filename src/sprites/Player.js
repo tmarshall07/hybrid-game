@@ -9,6 +9,8 @@ import MultiKey from '../helpers/multiKey.js';
  */
 export default class Player {
   constructor(config) {
+    const self = this;
+
     this.scene = config.scene;
     const { scene, x, y, key } = config;
 
@@ -60,7 +62,7 @@ export default class Player {
 
     // Rope cooldown
     this.canFireRope = true;
-    this.ropeCooldown = null;
+    this.canReleaseRope = false;
 
     // Before matter's update, reset our record of what surfaces the player is touching.
     scene.matter.world.on('beforeupdate', this.resetTouching, this);
@@ -76,6 +78,17 @@ export default class Player {
       objectA: [this.sensors.bottom, this.sensors.left, this.sensors.right],
       callback: this.onSensorCollide,
       context: this
+    });
+
+    // Keys
+    scene.input.keyboard.on('keydown_X', function (event) {
+      if (self.canFireRope) {
+        self.fireRope();
+        self.canFireRope = false;
+      } else {
+        self.releaseRope();
+        self.canFireRope = true;
+      }
     });
 
     // Hook into Phaser update
@@ -133,16 +146,6 @@ export default class Player {
         },
       });
     }
-
-    if (ropeKeyDown) {
-      if (this.canFireRope) {
-        this.fireRope();
-
-        this.canFireRope = false;
-      } else {
-        console.log(this.rope);
-      }
-    }
   }
 
   onSensorCollide({ bodyA, bodyB, pair }) {
@@ -187,15 +190,19 @@ export default class Player {
   }
 
   fireRope() {
-    this.rope = new Rope({
-      player: this.sprite,
-      key: 'glove',
-      scene: this.scene,
-    });
+    if (!this.rope) {
+      this.rope = new Rope({
+        player: this.sprite,
+        key: 'glove',
+        scene: this.scene,
+      });
+    }
 
-    this.ropeCooldown
+    this.rope.fire();
+  }
 
-    console.log(this.rope);
+  releaseRope () {
+    this.rope.release();
   }
 
 }
