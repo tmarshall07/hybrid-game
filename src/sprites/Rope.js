@@ -16,6 +16,7 @@ export default class Rope {
       shape: 'circle',
       mass: .1,
       ignoreGravity: false,
+      label: 'hook body',
     })
     // Set collision category for each element
     .setCollisionCategory(this.collisionCategory)
@@ -36,17 +37,24 @@ export default class Rope {
   }
 
   fire() {
+    // Reset hook position
+    this.hook.x = this.player.x;
+    this.hook.y = this.player.y;
+
+    console.log(this.hook);
+
     this.links = [];
 
     let previousLink;
     const jointLength = 2;
-    const jointStiffness = .1;
+    const jointStiffness = .2;
     
     for (let i = 0; i < 5; i += 1) {
       const link = this.scene.matter.add.sprite(this.x, this.y, 'chain', null, {
         shape: 'circle',
         mass: 0,
         ignoreGravity: true,
+        label: 'link body',
       })
       // Set collision category for each element
       .setCollisionCategory(this.collisionCategory)
@@ -63,7 +71,7 @@ export default class Rope {
       }
 
       // Add label to know which constraint this is
-      constraint.label = "rope_constraint";
+      constraint.label = "rope constraint";
 
       this.links.push({
         link,
@@ -74,7 +82,8 @@ export default class Rope {
     }
 
     // Attach rope to player
-    this.scene.matter.add.constraint(previousLink, this.player);
+    const playerRopeConstraint = this.scene.matter.add.constraint(previousLink, this.player, jointLength, jointStiffness);
+    playerRopeConstraint.label = 'rope constraint';
 
     // Set hooked state
     this.hooked = false;
@@ -87,21 +96,29 @@ export default class Rope {
     let hookDirection = this.player.flipX ? -1 : 1;
     this.hook.applyForce({ x: .0075 * hookDirection, y: -.0075 });
 
-    console.log(this.scene.matter.world);
+    console.log(this.links);
+    console.log(this.scene.matter.world.localWorld.constraints);
+
   }
 
   release () {
+    // Set to not currently hooked
     this.hooked = false;
+    // Destroy link references
     for (let i = 0; i < this.links.length; i += 1) {
       this.links[i].link.destroy();
     }
 
-    const constraints = this.scene.matter.world.localWorld.constraints;
-    for (let i = 0; i < constraints.length; i += 1) {
-      if (constraints[i].label === 'rope_constraint') constraints.splice(i, 1);
-    }
+    // Clear links array
+    this.links = [];
 
-    console.log(this.scene.matter.world);
+    // Remove rope constraints
+    this.scene.matter.world.localWorld.constraints = this.scene.matter.world.localWorld.constraints.filter(constraint => constraint.label !== 'rope constraint');
+
+    // this.hook.visible = false;
+
+    console.log(this.links);
+    console.log(this.scene.matter.world.localWorld.constraints);
   }
 
   update () {
@@ -109,6 +126,8 @@ export default class Rope {
       // If we're hooked, hold hook in this position
       this.hook.x = this.hookedPosition.x;
       this.hook.y = this.hookedPosition.y;
+    } else {
+      
     }
   }
 

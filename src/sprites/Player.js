@@ -16,6 +16,7 @@ export default class Player {
 
     // Create the sprite
     this.sprite = this.scene.matter.add.sprite(x, y, key, 0);
+    this.sprite.label = 'player main body';
     this.collisionCategory = this.scene.matter.world.nextCategory();
     
     // Add matter bodies, sensors, and sprite options
@@ -38,6 +39,7 @@ export default class Player {
       frictionStatic: 0,
       frictionAir: 0.001,
       friction: 0.05,
+      label: 'player body',
     });
     
     this.sprite
@@ -52,6 +54,17 @@ export default class Player {
     this.rightInput = new MultiKey(scene, [RIGHT, D]);
     this.jumpInput = new MultiKey(scene, [UP, W]);
     this.ropeInput = new MultiKey(scene, [X]);
+
+    // Keybinding for firing rope
+    scene.input.keyboard.on('keydown_X', function (event) {
+      if (self.canFireRope) {
+        self.fireRope();
+        self.canFireRope = false;
+      } else {
+        self.releaseRope();
+        self.canFireRope = true;
+      }
+    });
 
     // Track sensors that are touching something
     this.isTouching = { left: false, right: false, ground: false };
@@ -78,17 +91,6 @@ export default class Player {
       objectA: [this.sensors.bottom, this.sensors.left, this.sensors.right],
       callback: this.onSensorCollide,
       context: this
-    });
-
-    // Keys
-    scene.input.keyboard.on('keydown_X', function (event) {
-      if (self.canFireRope) {
-        self.fireRope();
-        self.canFireRope = false;
-      } else {
-        self.releaseRope();
-        self.canFireRope = true;
-      }
     });
 
     // Hook into Phaser update
