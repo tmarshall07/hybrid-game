@@ -7,16 +7,20 @@ export default class Rope {
     this.scene = scene;
     this.player = player;
 
-    this.x = player.x;
-    this.y = player.y;
-
     console.log(this.scene.matter);
 
     // Increment category so the rope gets assigned a new category number
     this.collisionCategory = this.scene.matter.world.nextCategory();
 
+    // Plug into Phaser update
+    this.scene.events.on("update", this.update, this);
+
+    console.log(this.player);
+  }
+
+  fire() {
     // Create the hook that grabs on to things
-    this.hook = this.scene.matter.add.sprite(this.x, this.y, 'chain', null, {
+    this.hook = this.scene.matter.add.sprite(this.player.x, this.player.y, 'chain', null, {
       shape: 'circle',
       mass: .1,
       ignoreGravity: false,
@@ -34,21 +38,6 @@ export default class Rope {
       context: this
     });
 
-    // Plug into Phaser update
-    this.scene.events.on("update", this.update, this);
-
-    console.log(this.player);
-  }
-
-  fire() {
-    // Reset hook position
-    console.log(Body);
-    
-    this.hook.x = this.player.x;
-    this.hook.y = this.player.y;
-
-    console.log(this.hook);
-
     this.links = [];
 
     let previousLink;
@@ -56,7 +45,7 @@ export default class Rope {
     const jointStiffness = .2;
     
     for (let i = 0; i < 5; i += 1) {
-      const link = this.scene.matter.add.sprite(this.x, this.y, 'chain', null, {
+      const link = this.scene.matter.add.sprite(this.player.x, this.player.y, 'chain', null, {
         shape: 'circle',
         mass: 0,
         ignoreGravity: true,
@@ -107,11 +96,10 @@ export default class Rope {
     // Set to not currently hooked
     this.hooked = false;
 
-    // Reset hook static properties
-    this.hook.body.density = this.hook.cache.density;
-    this.hook.body.inertia = this.hook.cache.inertia;
-    this.hook.body.mass = this.hook.cache.mass;
-    this.hook.setStatic(false);
+    // Remove from matterCollision plugin
+    this.scene.matterCollision.removeOnCollideStart({ objectA: this.hook });
+    // Destroy the hook
+    this.hook.destroy();    
 
     // Destroy link references
     for (let i = 0; i < this.links.length; i += 1) {
