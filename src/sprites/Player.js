@@ -134,8 +134,8 @@ export default class Player {
     }
 
     // // Limit horizontal speed
-    if (velocity.x > 7) sprite.setVelocityX(7);
-    else if (velocity.x < -7) sprite.setVelocityX(-7);
+    if (velocity.x > 3) sprite.setVelocityX(3);
+    else if (velocity.x < -3) sprite.setVelocityX(-3);
 
     if (jumpKeyDown && this.canJump && isOnGround) {
       sprite.setVelocityY(-5);
