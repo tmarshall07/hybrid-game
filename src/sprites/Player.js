@@ -38,7 +38,7 @@ export default class Player {
       parts: [ mainBody, this.sensors.bottom, this.sensors.left, this.sensors.right ],
       frictionStatic: 0,
       frictionAir: 0.001,
-      friction: 0.05,
+      friction: 0,
       label: 'player body',
     });
     
@@ -133,9 +133,10 @@ export default class Player {
       }
     }
 
-    // // Limit horizontal speed
-    if (velocity.x > 3) sprite.setVelocityX(3);
-    else if (velocity.x < -3) sprite.setVelocityX(-3);
+    // Limit horizontal velocity
+    const maxVelocity = 2;
+    if (velocity.x > maxVelocity) sprite.setVelocityX(maxVelocity);
+    else if (velocity.x < -maxVelocity) sprite.setVelocityX(-maxVelocity);
 
     if (jumpKeyDown && this.canJump && isOnGround) {
       sprite.setVelocityY(-5);
