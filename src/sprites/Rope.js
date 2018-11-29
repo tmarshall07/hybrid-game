@@ -1,3 +1,5 @@
+// Add matter bodies, sensors, and sprite options
+const { Body, Bodies } = Phaser.Physics.Matter.Matter;
 export default class Rope {
   constructor (config) {
     const { player, key, scene } = config;
@@ -7,6 +9,8 @@ export default class Rope {
 
     this.x = player.x;
     this.y = player.y;
+
+    console.log(this.scene.matter);
 
     // Increment category so the rope gets assigned a new category number
     this.collisionCategory = this.scene.matter.world.nextCategory();
@@ -30,7 +34,7 @@ export default class Rope {
       context: this
     });
 
-    // Hook into Phaser update
+    // Plug into Phaser update
     this.scene.events.on("update", this.update, this);
 
     console.log(this.player);
@@ -38,6 +42,8 @@ export default class Rope {
 
   fire() {
     // Reset hook position
+    console.log(Body);
+    
     this.hook.x = this.player.x;
     this.hook.y = this.player.y;
 
@@ -87,10 +93,6 @@ export default class Rope {
 
     // Set hooked state
     this.hooked = false;
-    this.hookedPosition = {
-      x: null,
-      y: null,
-    }
 
     // Propel hook outward
     let hookDirection = this.player.flipX ? -1 : 1;
@@ -104,6 +106,13 @@ export default class Rope {
   release () {
     // Set to not currently hooked
     this.hooked = false;
+
+    // Reset hook static properties
+    this.hook.body.density = this.hook.cache.density;
+    this.hook.body.inertia = this.hook.cache.inertia;
+    this.hook.body.mass = this.hook.cache.mass;
+    this.hook.setStatic(false);
+
     // Destroy link references
     for (let i = 0; i < this.links.length; i += 1) {
       this.links[i].link.destroy();
@@ -114,29 +123,21 @@ export default class Rope {
 
     // Remove rope constraints
     this.scene.matter.world.localWorld.constraints = this.scene.matter.world.localWorld.constraints.filter(constraint => constraint.label !== 'rope constraint');
-
-    // this.hook.visible = false;
-
-    console.log(this.links);
-    console.log(this.scene.matter.world.localWorld.constraints);
   }
 
   update () {
-    if (this.hooked) {
-      // If we're hooked, hold hook in this position
-      this.hook.x = this.hookedPosition.x;
-      this.hook.y = this.hookedPosition.y;
-    } else {
-      
-    }
+    
   }
 
   onHookCollide() {
+    this.hook.cache = {
+      density: this.hook.body.density,
+      inertia: this.hook.body.inertia,
+      mass: this.hook.body.mass,
+    }
     // Toggle hook state
     this.hooked = true;
-
-    // Add hooked position as this current position
-    this.hookedPosition.x = this.hook.x;
-    this.hookedPosition.y = this.hook.y;
+    // Set static to cling to whatever we collided with
+    this.hook.setStatic(true);
   }
 }
